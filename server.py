@@ -196,7 +196,7 @@ def user_login():
         token = create_access_token(identity=str(_id))
         print(token)
 
-        resp = make_response(jsonify({'message': 'user login successfully', 'success': True}), res_code['SUCCESS'])
+        resp = make_response(jsonify({'message': 'user login', 'success': True}), res_code['SUCCESS'])
         resp.headers['x-token'] = token
         return resp 
     else:
@@ -218,7 +218,7 @@ def get_profile():
             '_id': str(saved.get('_id')),
             'text': saved.get('text'),
             'label': saved.get('label',''),
-            'date_created': __convert_datetime(saved.get('date_created'))
+            'date_modified': __convert_datetime(saved.get('date_modified'))
         })
     # put in object
     user_obj = {
@@ -257,15 +257,55 @@ def save_text():
     _text_id = new_text_obj.inserted_id
 
     return jsonify({
-        'message': 'text saved successfully', 
+        'message': 'text saved', 
         'data': {
             '_id': str(_text_id),
             'text': new_text['text'],
             'label': new_text['label'],
-            'date_created': __convert_datetime(timestamp)
+            'date_modified': __convert_datetime(timestamp)
         },
         'success': True
     }), res_code['SUCCESS']
+
+
+@app.route('/api/text/<text_id>', methods=['PATCH', 'DELETE'])
+@jwt_required
+def process_text(text_id):
+    
+    # partial update
+    if request.method == 'PATCH':
+        
+        _id = get_jwt_identity()
+        # verify author and post
+        obj = mongo.db.texts.find_one({'_id': ObjectId(text_id), 'author': ObjectId(_id)}) 
+        if not obj:
+            return jsonify({'message': 'invalid update', 'success': False}), res_code['UNAUTH']
+        
+        return jsonify({
+            'message': 'text edited',
+            'success': True
+        }), res_code['SUCCESS']
+    
+    # delete text
+    if request.method == 'DELETE':
+
+        _id = get_jwt_identity()
+        # verify author and post
+        obj = mongo.db.texts.find_one({'_id': ObjectId(text_id), 'author': ObjectId(_id)}) 
+        if not obj:
+            return jsonify({'message': 'invalid delete', 'success': False}), res_code['UNAUTH']
+        print(obj)
+        removed_obj = mongo.db.texts.delete_one({'_id': obj.get('_id'), 'author': obj.get('author')})
+        print(removed_obj.deleted_count)
+        return jsonify({
+            'message': 'text deleted',
+            'data': {
+                '_id': str(obj.get('_id')),
+                'text': obj.get('text')
+            },
+            'success': True
+        }), res_code['SUCCESS']
+
 
 
 ### ===== MAIN ===== ###
