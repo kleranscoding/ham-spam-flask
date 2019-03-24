@@ -89,21 +89,20 @@ def api_index():
     }), res_code['SUCCESS'])
 
 
-@app.route('/api/classify', methods=['POST'])
+@app.route('/api/classify', methods=['POST', 'GET'])
 def api_classify():
-    if request.method == 'POST': 
+    if request.method in ['POST', 'GET']: 
         
         # open model
         model = None
         with open('data/nb_model.pickle','rb') as f: model = pickle.load(f)
         if not model: return jsonify({'message': 'server error', 'success': False}), res_code['INTERNAL_ERR']
 
-        data = request.json
-        if not data.get('text', None): 
+        if not request.json: 
             return jsonify({'message': 'text is empty', 'success': False}), res_code['BAD_REQ']
         
         # clean data
-        text = __cleanse_instance(data.get('text'))
+        text = __cleanse_instance(request.json.get('text'))
         
         # do classification
         words = text.split()
@@ -268,18 +267,32 @@ def save_text():
     }), res_code['SUCCESS']
 
 
-@app.route('/api/text/<text_id>', methods=['PATCH', 'DELETE'])
+@app.route('/api/text/<text_id>', methods=['GET', 'PATCH', 'DELETE'])
 @jwt_required
 def process_text(text_id):
     
+    _id = get_jwt_identity()
+    # verify author and post
+    obj = mongo.db.texts.find_one({'_id': ObjectId(text_id), 'author': ObjectId(_id)}) 
+    if not obj:
+        return jsonify({'message': 'invalid update', 'success': False}), res_code['UNAUTH']
+
+    # get text info
+    if request.method == 'GET':
+
+        return jsonify({
+            'message': 'got text info',
+            'data': {
+                '_id': str(obj.get('_id')),
+                'text': obj.get('text'),
+                'label': obj.get('label'),
+                'date_modified': obj.get('date_modified')
+            },
+            'success': True
+        }), res_code['SUCCESS']
+
     # partial update
     if request.method == 'PATCH':
-        
-        _id = get_jwt_identity()
-        # verify author and post
-        obj = mongo.db.texts.find_one({'_id': ObjectId(text_id), 'author': ObjectId(_id)}) 
-        if not obj:
-            return jsonify({'message': 'invalid update', 'success': False}), res_code['UNAUTH']
         
         return jsonify({
             'message': 'text edited',
@@ -289,12 +302,6 @@ def process_text(text_id):
     # delete text
     if request.method == 'DELETE':
 
-        _id = get_jwt_identity()
-        # verify author and post
-        obj = mongo.db.texts.find_one({'_id': ObjectId(text_id), 'author': ObjectId(_id)}) 
-        if not obj:
-            return jsonify({'message': 'invalid delete', 'success': False}), res_code['UNAUTH']
-        print(obj)
         removed_obj = mongo.db.texts.delete_one({'_id': obj.get('_id'), 'author': obj.get('author')})
         print(removed_obj.deleted_count)
         return jsonify({
