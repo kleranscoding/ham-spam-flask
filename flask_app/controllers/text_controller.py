@@ -26,6 +26,12 @@ def __convert_datetime(time_str,time_required=True):
 
 ### ===== ROUTES ===== ###
 
+
+@jwt.unauthorized_loader
+def unauthorized_response(callback):
+    return jsonify({'message': 'missing Authorization Header', 'success': False}), res_code['UNAUTH']
+
+
 @app.route('/api/text/new', methods=['POST'])
 @jwt_required
 def save_text():
