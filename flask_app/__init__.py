@@ -15,3 +15,5 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
 bcrypt = Bcrypt(app)
 mongo = PyMongo(app)
 jwt = JWTManager(app)
+
+from flask_app.controllers import *
