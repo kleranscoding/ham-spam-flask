@@ -2,34 +2,14 @@ from flask import jsonify, request, make_response
 from bson.objectid import ObjectId
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from flask_app import app, mongo, bcrypt, jwt
-import sys, os, re
-import pickle, datetime, time
-
-
-res_code = {
-    'SUCCESS': 200,
-    'BAD_REQ': 400,
-    'UNAUTH': 401,
-    'NOTFOUND': 404,
-    'INTERNAL_ERR': 500
-}
-
-
-### ===== FUNCTIONS ===== ###
-
-## convert epoch to datetime string
-def __convert_datetime(time_str,time_required=True):
-    if time_required:
-        return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(time_str)))
-    return time.strftime('%Y-%m-%d', time.localtime(float(time_str)))
+import flask_app.var_func as vf
 
 
 ### ===== ROUTES ===== ###
 
 @jwt.unauthorized_loader
 def unauthorized_response(callback):
-    return jsonify({'message': 'missing Authorization Header', 'success': False}), res_code['UNAUTH']
-
+    return jsonify({'message': 'missing Authorization Header', 'success': False}), vf.res_code['UNAUTH']
 
 
 @app.route('/api/users/register', methods=['POST'])
@@ -41,18 +21,18 @@ def create_new_user():
 
         # check if username/email/password is missing or empty string
         if not data.get('username') or not data.get('email') or not data.get('password'): 
-            return jsonify({'bad request': 'username email password cannot be empty, ', 'success': False}), res_code['BAD_REQ']
+            return jsonify({'bad request': 'username email password cannot be empty, ', 'success': False}), vf.res_code['BAD_REQ']
         
         # check if email exists
         existing_email = mongo.db.users.find_one({'email': data.get('email')})
         print(existing_email)
         if existing_email: 
-            return jsonify({'bad request': 'email exists', 'success': False}), res_code['BAD_REQ']
+            return jsonify({'bad request': 'email exists', 'success': False}), vf.vf.res_code['BAD_REQ']
         
         # use bcrypt to hash password and update
         password_hash = bcrypt.generate_password_hash(data.get('password')).decode('utf-8')
         
-        timestamp = str(datetime.datetime.now().timestamp())
+        timestamp = str()
         new_data = {
             'username': data.get('username'),
             'email': data.get('email'),
@@ -68,11 +48,11 @@ def create_new_user():
         token = create_access_token(identity=str(_id))
         print(token)
         
-        resp = make_response(jsonify({'message': 'user registered successfully', 'success': True}), res_code['SUCCESS'])
+        resp = make_response(jsonify({'message': 'user registered successfully', 'success': True}), vf.res_code['SUCCESS'])
         resp.headers['x-token'] = token
         return resp
     else:
-        return jsonify({'message': 'bad request', 'success': False}), res_code['BAD_REQ']
+        return jsonify({'message': 'bad request', 'success': False}), vf.res_code['BAD_REQ']
 
 
 @app.route('/api/users/login', methods=['POST'])
@@ -83,22 +63,22 @@ def user_login():
         # check if email password is empty string
         if not data.get('email') or not data.get('password'):
             return jsonify({
-              'bad request': 'email password cannot be empty, ', 'success': False}), res_code['BAD_REQ']
+              'bad request': 'email password cannot be empty, ', 'success': False}), vf.res_code['BAD_REQ']
 
         # check if user exists
         check_user = mongo.db.users.find_one({'email': data.get('email')})
         if not check_user:
-            return jsonify({'message': 'user not found', 'success': False}), res_code['UNAUTH']
+            return jsonify({'message': 'user not found', 'success': False}), vf.res_code['UNAUTH']
         
         # check if password matches
         password_match = bcrypt.check_password_hash(check_user['password'], data.get('password'))
         if not password_match:
-            return jsonify({'message': 'incorrect password', 'success': False}), res_code['UNAUTH']
+            return jsonify({'message': 'incorrect password', 'success': False}), vf.res_code['UNAUTH']
 
         _id = check_user['_id']
 
         # save last login detail
-        timestamp = str(datetime.datetime.now().timestamp())
+        timestamp = str(vf.__get_timestamp())
         mongo.db.users.update_one(
             {'_id': check_user['_id']},
             {'$set': {'last_login': timestamp}}
@@ -108,11 +88,11 @@ def user_login():
         token = create_access_token(identity=str(_id))
         print(token)
 
-        resp = make_response(jsonify({'message': 'user login', 'success': True}), res_code['SUCCESS'])
+        resp = make_response(jsonify({'message': 'user login', 'success': True}), vf.res_code['SUCCESS'])
         resp.headers['x-token'] = token
         return resp 
     else:
-        return jsonify({'message': 'bad request', 'success': False}), res_code['BAD_REQ']
+        return jsonify({'message': 'bad request', 'success': False}), vf.res_code['BAD_REQ']
 
 
 @app.route('/api/users/profile', methods=['GET'])
@@ -122,7 +102,7 @@ def get_profile():
     # get user
     user = mongo.db.users.find_one({'_id': ObjectId(_id)})
     if not user:
-        return jsonify({'message': 'user not found','success': False}), res_code['NOTFOUND']
+        return jsonify({'message': 'user not found','success': False}), vf.res_code['NOTFOUND']
     # get user saved texts
     saved_texts = []
     for saved in mongo.db.texts.find({'author': ObjectId(_id)}):
@@ -130,14 +110,14 @@ def get_profile():
             '_id': str(saved.get('_id')),
             'text': saved.get('text'),
             'label': saved.get('label',''),
-            'date_modified': __convert_datetime(saved.get('date_modified'))
+            'date_modified': vf.__convert_datetime(saved.get('date_modified'))
         })
     # put in object
     user_obj = {
         'username': user.get('username'),
         'email': user.get('email'),
-        'date_join': __convert_datetime(user.get('date_join'), time_required=False),
-        'last_login': __convert_datetime(user.get('last_login')),
+        'date_join': vf.__convert_datetime(user.get('date_join'), time_required=False),
+        'last_login': vf.__convert_datetime(user.get('last_login')),
         'saved_texts': saved_texts
     }
     print(user_obj)
@@ -145,4 +125,4 @@ def get_profile():
         'message': 'got profile', 
         'data': user_obj,
         'success': True
-    }), res_code['SUCCESS']
+    }), vf.res_code['SUCCESS']

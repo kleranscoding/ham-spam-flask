@@ -2,34 +2,14 @@ from flask import jsonify, request
 from bson.objectid import ObjectId
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_app import app, mongo, jwt
-import sys, os, re
-import pickle, datetime, time
-
-
-res_code = {
-    'SUCCESS': 200,
-    'BAD_REQ': 400,
-    'UNAUTH': 401,
-    'NOTFOUND': 404,
-    'INTERNAL_ERR': 500
-}
-
-
-### ===== FUNCTIONS ===== ###
-
-## convert epoch to datetime string
-def __convert_datetime(time_str,time_required=True):
-    if time_required:
-        return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(time_str)))
-    return time.strftime('%Y-%m-%d', time.localtime(float(time_str)))
+import flask_app.var_func as vf
 
 
 ### ===== ROUTES ===== ###
 
-
 @jwt.unauthorized_loader
 def unauthorized_response(callback):
-    return jsonify({'message': 'missing Authorization Header', 'success': False}), res_code['UNAUTH']
+    return jsonify({'message': 'missing Authorization Header', 'success': False}), vf.res_code['UNAUTH']
 
 
 @app.route('/api/text/new', methods=['POST'])
@@ -37,11 +17,11 @@ def unauthorized_response(callback):
 def save_text():
     
     if not request.json or not request.json.get('text'):
-        return jsonify({'message': 'text cannot be empty', 'success': False}), res_code['BAD_REQ']
+        return jsonify({'message': 'text cannot be empty', 'success': False}), vf.res_code['BAD_REQ']
 
     _id = get_jwt_identity()
     
-    timestamp = str(datetime.datetime.now().timestamp())
+    timestamp = str(vf.__get_timestamp())
     new_text = {
         'text': request.json.get('text'),
         'label': request.json.get('label',''),
@@ -60,10 +40,10 @@ def save_text():
             '_id': str(_text_id),
             'text': new_text['text'],
             'label': new_text['label'],
-            'date_modified': __convert_datetime(timestamp)
+            'date_modified': vf.__convert_datetime(timestamp)
         },
         'success': True
-    }), res_code['SUCCESS']
+    }), vf.res_code['SUCCESS']
 
 
 @app.route('/api/text/<text_id>', methods=['GET', 'PATCH', 'DELETE'])
@@ -74,7 +54,7 @@ def process_text(text_id):
     # verify author and post
     obj = mongo.db.texts.find_one({'_id': ObjectId(text_id), 'author': ObjectId(_id)}) 
     if not obj:
-        return jsonify({'message': 'invalid update', 'success': False}), res_code['UNAUTH']
+        return jsonify({'message': 'invalid update', 'success': False}), vf.res_code['UNAUTH']
 
     # get text info
     if request.method == 'GET':
@@ -88,7 +68,7 @@ def process_text(text_id):
                 'date_modified': obj.get('date_modified')
             },
             'success': True
-        }), res_code['SUCCESS']
+        }), vf.res_code['SUCCESS']
 
     # partial update
     if request.method == 'PATCH':
@@ -96,7 +76,7 @@ def process_text(text_id):
         return jsonify({
             'message': 'text edited',
             'success': True
-        }), res_code['SUCCESS']
+        }), vf.res_code['SUCCESS']
     
     # delete text
     if request.method == 'DELETE':
@@ -110,7 +90,7 @@ def process_text(text_id):
                 'text': obj.get('text')
             },
             'success': True
-        }), res_code['SUCCESS']
+        }), vf.res_code['SUCCESS']
 
 
 
