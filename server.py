@@ -1,9 +1,7 @@
 from flask import jsonify, request, redirect, url_for, make_response, send_from_directory
-from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
-from app import app
+from flask_jwt_extended import (jwt_required, create_access_token, get_jwt_identity)
+from flask_app import app, mongo, bcrypt, jwt
 import sys, os, re
 import pickle, datetime, time
 import requests
@@ -26,15 +24,6 @@ res_code = {
 sys.path.append('data')
 
 PORT = os.environ.get('PORT','8088')
-
-app.config['MONGO_URI'] = os.environ.get('MONGODB_URI','mongodb://localhost/ham-spam-flask')
-
-bcrypt = Bcrypt(app)
-mongo = PyMongo(app)
-jwt = JWTManager(app)
-
-app.config['JWT_SECRET_KEY'] = 'pov3try'
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
 
 
 ### ===== FUNCTIONS===== ###
@@ -238,14 +227,16 @@ def get_profile():
 @app.route('/api/text/new', methods=['POST'])
 @jwt_required
 def save_text():
-    data = request.json
+    
+    if not request.json or not request.json.get('text'):
+        return jsonify({'message': 'text cannot be empty', 'success': False}), res_code['BAD_REQ']
+
     _id = get_jwt_identity()
     
-    # 
     timestamp = str(datetime.datetime.now().timestamp())
     new_text = {
-        'text': data.get('text'),
-        'label': data.get('label',''),
+        'text': request.json.get('text'),
+        'label': request.json.get('label',''),
         'author': ObjectId(_id),
         'date_created': timestamp,
         'date_modified': timestamp
