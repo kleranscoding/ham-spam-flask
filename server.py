@@ -77,7 +77,8 @@ def index():
 
 @app.route('/index')
 @app.route('/home')
-def to_index(): return redirect(url_for('index'))
+def to_index(): 
+    return redirect(url_for('index'))
 
 
 @app.route('/api')
@@ -91,27 +92,32 @@ def api_index():
 @app.route('/api/classify', methods=['POST'])
 def api_classify():
     if request.method == 'POST': 
-        model = None
+        
         # open model
+        model = None
         with open('data/nb_model.pickle','rb') as f: model = pickle.load(f)
+        if not model: return jsonify({'message': 'server error', 'success': False}), res_code['INTERNAL_ERR']
+
         data = request.json
-        #'''
         if not data.get('text', None): 
             return jsonify({'message': 'text is empty', 'success': False}), res_code['BAD_REQ']
-        #'''
+        
+        # clean data
         text = __cleanse_instance(data.get('text'))
+        
         # do classification
         words = text.split()
         if not words: 
             return jsonify({'message': 'text is empty', 'success': False}), res_code['BAD_REQ']
         result = model.classify(words)
+        
         return make_response(jsonify({
-            'result': result,
+            'message': 'got label successfully',
+            'data': {'label': result},
             'success': True
         }), res_code['SUCCESS'])
     else:
         return jsonify({'message': '', 'success': False}), res_code['BAD_REQ']
-
 
 
 @app.route('/api/users/register', methods=['POST'])
@@ -152,7 +158,7 @@ def create_new_user():
         
         resp = make_response(jsonify({'message': 'user registered successfully', 'success': True}), res_code['SUCCESS'])
         resp.headers['x-token'] = token
-        return token
+        return resp
     else:
         return jsonify({'message': 'bad request', 'success': False}), res_code['BAD_REQ']
 
@@ -197,24 +203,24 @@ def user_login():
         return jsonify({'message': 'bad request', 'success': False}), res_code['BAD_REQ']
 
 
-
 @app.route('/api/users/profile', methods=['GET'])
 @jwt_required
 def get_profile():
     _id = get_jwt_identity()
-    
+    # get user
     user = mongo.db.users.find_one({'_id': ObjectId(_id)})
     if not user:
         return jsonify({'message': 'user not found','success': False}), res_code['NOTFOUND']
-
+    # get user saved texts
     saved_texts = []
     for saved in mongo.db.texts.find({'author': ObjectId(_id)}):
         saved_texts.append({
-            '_id': saved.get('_id'),
+            '_id': str(saved.get('_id')),
             'text': saved.get('text'),
-            'label': saved.get('label','')
+            'label': saved.get('label',''),
+            'date_created': __convert_datetime(saved.get('date_created'))
         })
-
+    # put in object
     user_obj = {
         'username': user.get('username'),
         'email': user.get('email'),
@@ -223,11 +229,43 @@ def get_profile():
         'saved_texts': saved_texts
     }
     print(user_obj)
-    
     return jsonify({
         'message': 'got profile', 
         'data': user_obj,
-        'success': True}), res_code['SUCCESS']
+        'success': True
+    }), res_code['SUCCESS']
+
+
+@app.route('/api/text/new', methods=['POST'])
+@jwt_required
+def save_text():
+    data = request.json
+    _id = get_jwt_identity()
+    
+    # 
+    timestamp = str(datetime.datetime.now().timestamp())
+    new_text = {
+        'text': data.get('text'),
+        'label': data.get('label',''),
+        'author': ObjectId(_id),
+        'date_created': timestamp,
+        'date_modified': timestamp
+    }
+
+    # save text object
+    new_text_obj = mongo.db.texts.insert_one(new_text)
+    _text_id = new_text_obj.inserted_id
+
+    return jsonify({
+        'message': 'text saved successfully', 
+        'data': {
+            '_id': str(_text_id),
+            'text': new_text['text'],
+            'label': new_text['label'],
+            'date_created': __convert_datetime(timestamp)
+        },
+        'success': True
+    }), res_code['SUCCESS']
 
 
 ### ===== MAIN ===== ###
