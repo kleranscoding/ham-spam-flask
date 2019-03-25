@@ -17,9 +17,6 @@ class Profile extends React.Component {
   
   render() {
     
-    console.log(localStorage);
-    console.log("render")
-
     return (
       <div>
         Profile

@@ -51,7 +51,8 @@ class NavBar extends React.Component {
     const logoutLinks = (
       <Grid item>
         <Button color="inherit" component={Link} to="/about">About</Button>
-        <Button color="inherit" >Login / Register</Button>
+        <Button color="inherit" component={Link} to="/signin">Sign in</Button>
+        <Button color="inherit" component={Link} to="/register">Register</Button>
       </Grid>
     );
 

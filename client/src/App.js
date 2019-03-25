@@ -13,7 +13,7 @@ import { setCurrentUser } from './actions/auth';
 const styles = {
   'app-main': {
     background: '#eeeeee',
-    height: '75vh',
+    height: '500px',
   },
 };
 
@@ -42,12 +42,12 @@ class App extends Component {
   render() {
 
     return (
-      <div className="App" style={styles['app-main']}>
+      <div className="App">
         <header>
           <NavBar title={"Ham-Spam-Flask"}/>
         </header>
         
-        <div className="main">
+        <div className="main" style={styles['app-main']}>
           <Switch>
             <Route path="/profile" component={ Profile } />
             <Route path="/about" component={ About } />
