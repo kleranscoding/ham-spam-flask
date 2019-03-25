@@ -48,7 +48,7 @@ def create_new_user():
         token = create_access_token(identity=str(_id))
         print(token)
         
-        resp = make_response(jsonify({'message': 'user registered successfully', 'success': True}), vf.res_code['SUCCESS'])
+        resp = make_response(jsonify({'message': 'user registered successfully', 'success': True, 'x-token': token}), vf.res_code['SUCCESS'])
         resp.headers['x-token'] = token
         return resp
     else:
@@ -88,8 +88,9 @@ def user_login():
         token = create_access_token(identity=str(_id))
         print(token)
 
-        resp = make_response(jsonify({'message': 'user login', 'success': True}), vf.res_code['SUCCESS'])
+        resp = make_response(jsonify({'message': 'user login', 'success': True, 'x-token': token}), vf.res_code['SUCCESS'])
         resp.headers['x-token'] = token
+        print(resp)
         return resp 
     else:
         return jsonify({'message': 'bad request', 'success': False}), vf.res_code['BAD_REQ']
