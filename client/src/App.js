@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Modal from '@material-ui/core/Modal';
 import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 import './styles/App.css';
 import NavBar from './components/NavBar';
@@ -24,21 +26,25 @@ class About extends Component {
   render() {
     return (
       <Card style={{width: '50%', margin: '0 auto', padding: 20}}>
-        <div> About </div>
-        <p>
-          One of the famous applications of Naive Bayes classiers is in spam filtering for e-mail.
-          Ham-Spam-Flask is a mini project that combines web development and machine learning model, specifically Naive Bayes Classifier.
-          For this machine learning model, we assume each text occurrance is independent of each other. 
-          Based on that we calculate the joint probability for each label SPAM and HAM.
-        </p>
-        <p>
-          Using the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank">
-            SMS Spam Collection dataset</a> from <a href="https://archive.ics.uci.edu/ml/index.php" target="_blank">UCI Machine Learning Repository</a>, 
-          we create a simple Naive Bayes Classifier as a Python object running on the Flask server.
-        </p>
-        <p>
-          For more details, visit <a href="https://github.com/kleranscoding/ham-spam-flask" target="_blank"> here </a>
-        </p>
+        <CardContent>
+          <Typography component="h3" variant="h5"> ABOUT </Typography>
+          <p>
+            One of the famous applications of Naive Bayes classiers is in spam filtering for e-mail.
+          </p>
+          <p>  
+            Ham-Spam-Flask is a mini project that combines web development and machine learning model, specifically Naive Bayes Classifier.
+            For this machine learning model, we assume each text occurrance is independent of each other. 
+            Based on that we calculate the joint probability for each label SPAM and HAM.
+          </p>
+          <p>
+            Using the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank">
+              SMS Spam Collection dataset</a> from <a href="https://archive.ics.uci.edu/ml/index.php" target="_blank">UCI Machine Learning Repository</a>, 
+            we create a simple Naive Bayes Classifier as a Python object running on the Flask server.
+          </p>
+          <p>
+            For more details, visit <a href="https://github.com/kleranscoding/ham-spam-flask" target="_blank"> here </a>
+          </p>
+        </CardContent>
       </Card>
     );
   }
@@ -52,6 +58,14 @@ class Home extends Component {
       </React.Fragment>
     );
   }
+}
+
+const Footer = () => {
+  return (
+    <div>
+      2019 Ham-Spam-Flask
+    </div>
+  );
 }
 
 if (localStorage.getItem('token')) {
@@ -90,8 +104,9 @@ class App extends Component {
         <Modal open={this.state.modalSignin} >
 
         </Modal>
-
+        <Footer />
       </div>
+      
     );
   }
 }
