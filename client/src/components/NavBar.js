@@ -23,13 +23,13 @@ const styles = {
     marginRight: 20,
   },
   brandLogo: {
-    fontFamily: '\"Luckiest Guy\", cursive'
+    fontFamily: 'Luckiest Guy, cursive'
   },
   appBar: {
     background: '#1566ed',
   },
   navBarButton: {
-    fontFamily: '\"Alegreya Sans\", sans-serif'
+    fontFamily: 'Alegreya Sans, sans-serif'
   }
 };
 

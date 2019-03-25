@@ -18,7 +18,9 @@ import MainContent from './components/MainContent';
 const styles = {
   'app-main': {
     background: '#4b94c1',
-    height: '100vh',
+    //height: '100vh',
+    paddingBottom: 40,
+    paddingTop: 40,
   },
 };
 
@@ -33,16 +35,16 @@ class About extends Component {
           </p>
           <p>  
             Ham-Spam-Flask is a mini project that combines web development and machine learning model, specifically Naive Bayes Classifier.
-            For this machine learning model, we assume each text occurrance is independent of each other. 
+            For this machine learning model, we assume each text occurrence is independent of each other. 
             Based on that we calculate the joint probability for each label SPAM and HAM.
           </p>
           <p>
-            Using the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank">
-              SMS Spam Collection dataset</a> from <a href="https://archive.ics.uci.edu/ml/index.php" target="_blank">UCI Machine Learning Repository</a>, 
+            Using the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank" rel="noopener noreferrer">
+              SMS Spam Collection dataset</a> from <a href="https://archive.ics.uci.edu/ml/index.php" target="_blank" rel="noopener noreferrer">UCI Machine Learning Repository</a>, 
             we create a simple Naive Bayes Classifier as a Python object running on the Flask server.
           </p>
           <p>
-            For more details, visit <a href="https://github.com/kleranscoding/ham-spam-flask" target="_blank"> here </a>
+            For more details, visit <a href="https://github.com/kleranscoding/ham-spam-flask" target="_blank" rel="noopener noreferrer"> here </a>
           </p>
         </CardContent>
       </Card>

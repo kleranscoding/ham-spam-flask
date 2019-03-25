@@ -17,7 +17,7 @@ import ham from '../assets/ham.png';
 
 const backURL = "http://localhost:8088";
 
-const resultLabelFont = '\"Luckiest Guy\", cursive';
+const resultLabelFont = 'Luckiest Guy, cursive';
 
 const styles = theme => ({
   card: {
@@ -165,7 +165,7 @@ class MainContent extends React.Component {
                 fontSize: 18,
                 backgroundColor: !this.state.canSubmit ? '#dee9f9' : '#3e6ab2', 
                 color: !this.state.canSubmit ? '#8f939b' : '#ffffff',
-                fontFamily: '\"Alegreya Sans\", sans-serif'}}
+                fontFamily: 'Alegreya Sans, sans-serif'}}
               onClick={this.submitText}
               disabled={!this.state.canSubmit}>
               HAM or SPAM ?
