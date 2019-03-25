@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import Modal from '@material-ui/core/Modal';
 
 import './styles/App.css';
 import NavBar from './components/NavBar';
@@ -8,12 +9,13 @@ import SignUp from './components/auth/SignUp';
 import SignIn from './components/auth/SignIn';
 import store from './store';
 import { setCurrentUser } from './actions/auth';
+import MainContent from './components/MainContent';
 
 
 const styles = {
   'app-main': {
-    background: '#eeeeee',
-    height: '500px',
+    background: '#5d769b',
+    height: '600px',
   },
 };
 
@@ -28,7 +30,9 @@ class About extends Component {
 class Home extends Component {
   render() {
     return (
-      <div> Home </div>
+      <React.Fragment>
+        <MainContent />
+      </React.Fragment>
     );
   }
 }
@@ -38,6 +42,15 @@ if (localStorage.getItem('token')) {
 }
 
 class App extends Component {
+
+  state = {
+    modalSignin: false,
+    modalRegister: false,
+  }
+
+  toggle = (modalName) => {
+
+   }
 
   render() {
 
@@ -56,6 +69,10 @@ class App extends Component {
             <Route exact path="/signin" component={ SignIn } />
           </Switch>
         </div>
+
+        <Modal open={this.state.modalSignin} >
+
+        </Modal>
 
       </div>
     );

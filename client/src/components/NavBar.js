@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { AppBar, Toolbar, Typography, Button, Grid } from '@material-ui/core';
 
 import { logoutUser } from '../actions/auth';
-import Profile from './Profile';
 
 const styles = {
   root: {
@@ -38,7 +37,7 @@ class NavBar extends React.Component {
 
   render () {
     const { classes } = this.props;
-    const { isAuthenticated } = this.props.auth;
+    const { isAuth } = this.props.auth;
     
     const loginLinks = (
       <Grid item>
@@ -72,7 +71,7 @@ class NavBar extends React.Component {
                 </Typography>
                 </Button>
               </Grid>
-              { isAuthenticated ? loginLinks : logoutLinks }
+              { isAuth ? loginLinks : logoutLinks }
             </Grid>
           </Toolbar>
         </AppBar>
@@ -89,6 +88,6 @@ NavBar.propTypes = {
 
 const mapStateToProps = (state) => ({
   auth: state.auth
-})
+});
 
 export default withRouter(connect(mapStateToProps, { logoutUser })(withStyles(styles)(NavBar)));

@@ -6,8 +6,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControl from '@material-ui/core/FormControl';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -125,40 +123,6 @@ class SignIn extends Component {
         </form>
       </Paper>
       </main>
-      
-      // <div className="container" style={{ marginTop: '50px', width: '700px'}}>
-      //     <h2 style={{marginBottom: '40px'}}>Sign in here!</h2>
-      //     <form onSubmit={ this.handleSubmit }>
-      //         <div className="form-group">
-      //             <input
-      //             type="email"
-      //             placeholder="Email"
-      //             className="form-control"
-      //             name="email"
-      //             onChange={ this.handleInputChange }
-      //             value={ this.state.email }
-      //             />
-      //         </div>
-      //         <div className="form-group">
-      //             <input
-      //             type="password"
-      //             placeholder="Password"
-      //             className="form-control"
-      //             name="password"
-      //             onChange={ this.handleInputChange }
-      //             value={ this.state.password }
-      //             />
-      //         </div>
-
-      //         { errors.message && (<div>{ errors.message }</div>)}
-
-      //         <div className="form-group">
-      //             <button type="submit" className="btn btn-primary">
-      //                 Sign in
-      //             </button>
-      //         </div>
-      //     </form>
-      // </div>
     );
   }
 }
