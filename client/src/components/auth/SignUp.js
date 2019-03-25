@@ -17,6 +17,12 @@ class SignUp extends Component {
     };
   }
 
+  componentWillMount () {
+    if (localStorage.getItem('token')) {
+      this.props.history.push('/');
+    }
+  }
+
   handleInputChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value

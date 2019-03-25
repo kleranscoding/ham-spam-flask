@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { AppBar, Toolbar, Typography, Button, Grid } from '@material-ui/core';
 
 import { logoutUser } from '../actions/auth';
-
+import Profile from './Profile';
 
 const styles = {
   root: {
@@ -42,6 +42,7 @@ class NavBar extends React.Component {
     
     const loginLinks = (
       <Grid item>
+        <Button color="inherit" component={Link} to="/profile">Profile</Button>
         <Button color="inherit" component={Link} to="/about">About</Button>
         <Button color="inherit" onClick={this.onLogout} >Logout</Button>
       </Grid>

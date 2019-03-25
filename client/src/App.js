@@ -37,7 +37,6 @@ if (localStorage.getItem('token')) {
   store.dispatch(setCurrentUser(localStorage.getItem('token')));
 }
 
-
 class App extends Component {
 
   render() {

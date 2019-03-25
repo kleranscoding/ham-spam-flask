@@ -1,16 +1,20 @@
 import React from 'react';
-//import axios from 'axios';
+import { withRouter } from 'react-router-dom';
+import axios from 'axios';
+
+import store from '../store';
+import { setCurrentUser } from  '../actions/auth';
+
 
 class Profile extends React.Component {
 
-  componentWillMount = () => {
-    console.log("will mount")
+  componentWillMount () {
     if (!localStorage.token) {
       console.log("no token! redirecting...")
       this.props.history.push("/");
     }
   }
-
+  
   render() {
     
     console.log(localStorage);
@@ -24,4 +28,4 @@ class Profile extends React.Component {
   }
 }
 
-export default Profile;
+export default withRouter(Profile);
