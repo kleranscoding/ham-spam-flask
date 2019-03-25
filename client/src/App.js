@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import Modal from '@material-ui/core/Modal';
+import Card from '@material-ui/core/Card';
 
 import './styles/App.css';
 import NavBar from './components/NavBar';
@@ -14,15 +15,31 @@ import MainContent from './components/MainContent';
 
 const styles = {
   'app-main': {
-    background: '#5d769b',
-    height: '600px',
+    background: '#4b94c1',
+    height: '100vh',
   },
 };
 
 class About extends Component {
   render() {
     return (
-      <div> About </div>
+      <Card style={{width: '50%', margin: '0 auto', padding: 20}}>
+        <div> About </div>
+        <p>
+          One of the famous applications of Naive Bayes classiers is in spam filtering for e-mail.
+          Ham-Spam-Flask is a mini project that combines web development and machine learning model, specifically Naive Bayes Classifier.
+          For this machine learning model, we assume each text occurrance is independent of each other. 
+          Based on that we calculate the joint probability for each label SPAM and HAM.
+        </p>
+        <p>
+          Using the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank">
+            SMS Spam Collection dataset</a> from <a href="https://archive.ics.uci.edu/ml/index.php" target="_blank">UCI Machine Learning Repository</a>, 
+          we create a simple Naive Bayes Classifier as a Python object running on the Flask server.
+        </p>
+        <p>
+          For more details, visit <a href="https://github.com/kleranscoding/ham-spam-flask" target="_blank"> here </a>
+        </p>
+      </Card>
     );
   }
 }

@@ -12,7 +12,12 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
+import spam from '../assets/spam.png';
+import ham from '../assets/ham.png';
+
 const backURL = "http://localhost:8088";
+
+const resultLabelFont = '\"Luckiest Guy\", cursive';
 
 const styles = theme => ({
   card: {
@@ -26,6 +31,9 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
+  resultLabel: {
+    fontFamily: resultLabelFont
+  },
 });
 
 class MainContent extends React.Component {
@@ -36,6 +44,7 @@ class MainContent extends React.Component {
       result: "",
       img_type: "",
       didModify: false,
+      canSubmit: false,
       save_message: "",
       errors: {}
     }
@@ -45,6 +54,7 @@ class MainContent extends React.Component {
     this.setState({ 
       user_text_input: e.target.value,
       didModify: true,
+      canSubmit: e.target.value !== "",
       errors: {} 
     });
   }
@@ -89,11 +99,11 @@ class MainContent extends React.Component {
     axios.post(backURL+'/api/classify', {text: this.state.user_text_input})
     .then(res => {
       let label = res.data.data.label;
-      let img_src = 'http://localhost:3000/static';
+      let img_src = "";
       if (label === "SPAM") {
-        img_src += '/assets/spam.png';
+        img_src = spam;
       } else if (label === "HAM") {
-        img_src += '/assets/ham.png';
+        img_src = ham;
       }
       this.setState({
         result: label, img_type: img_src, 
@@ -114,10 +124,12 @@ class MainContent extends React.Component {
     return (
       <div style={{width: '50%', margin: '0 auto'}}>
         <Card className={classes.card} >
+
           <CardContent >
             <Typography gutterBottom component="h3" variant="h5" >
-              Test your text is Spam or Ham!
+              Check your text message is Spam or Ham!
             </Typography>
+            
             <TextField
               id="user_input_text"
               onChange={this.handleTextChange}
@@ -127,18 +139,40 @@ class MainContent extends React.Component {
               rowsMax={8} margin="normal" variant="outlined"
               required
             />
+
+            <Typography component="p">
+              e.g. Congratulations ur awarded $500 &rArr; 
+              <span
+                style={{
+                  margin: 10, color: '#ff0000', fontSize: 20, 
+                  fontFamily: resultLabelFont,
+              }}>
+                SPAM
+              </span>
+            </Typography>
+
           </CardContent>
           
-          {errors.message && <Typography component="h6" variant="h6">{errors.message}</Typography>}
+          {errors.message && 
+            <Typography component="h6" variant="h6">
+              {errors.message}
+            </Typography>
+          }
           
           <CardActions style={{justifyContent: "flex-end"}}>
             <Button size="small" color="primary" 
-              style={{backgroundColor: '#dee9f9'}}
-              onClick={this.submitText}>
+              style={{
+                fontSize: 18,
+                backgroundColor: !this.state.canSubmit ? '#dee9f9' : '#3e6ab2', 
+                color: !this.state.canSubmit ? '#8f939b' : '#ffffff',
+                fontFamily: '\"Alegreya Sans\", sans-serif'}}
+              onClick={this.submitText}
+              disabled={!this.state.canSubmit}>
               HAM or SPAM ?
             </Button>
           </CardActions>
         </Card>
+
         { this.state.img_type && this.state.result &&
         <Card style={{marginTop: 25}}>
           <img className={classes.media}
@@ -146,7 +180,7 @@ class MainContent extends React.Component {
                 width: 100, height: 100, 
                 justifyContent: 'center', marginTop: 10,
               }}
-              src={this.state.img_type} /> 
+              src={this.state.img_type} alt={this.state.img_type.toLowerCase()}/> 
           <Typography component="h2" variant="h6">
                 Your text is 
                 <span 
@@ -154,6 +188,7 @@ class MainContent extends React.Component {
                     marginLeft: 10, marginRight: 10, 
                     color: this.state.result === 'HAM' ? '#96521e' : '#ff1100', 
                     fontWeight: 700, fontSize: 32,
+                    fontFamily: resultLabelFont,
                 }}>
                   {this.state.result}
                 </span>

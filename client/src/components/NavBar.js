@@ -22,9 +22,15 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
-  appBar: {
-    background: '#0036ff',
+  brandLogo: {
+    fontFamily: '\"Luckiest Guy\", cursive'
   },
+  appBar: {
+    background: '#1566ed',
+  },
+  navBarButton: {
+    fontFamily: '\"Alegreya Sans\", sans-serif'
+  }
 };
 
 
@@ -41,17 +47,17 @@ class NavBar extends React.Component {
     
     const loginLinks = (
       <Grid item>
-        <Button color="inherit" component={Link} to="/profile">Profile</Button>
-        <Button color="inherit" component={Link} to="/about">About</Button>
-        <Button color="inherit" onClick={this.onLogout} >Logout</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/profile">Profile</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/about">About</Button>
+        <Button style={styles.navBarButton} color="inherit" onClick={this.onLogout} >Logout</Button>
       </Grid>
     );
 
     const logoutLinks = (
       <Grid item>
-        <Button color="inherit" component={Link} to="/about">About</Button>
-        <Button color="inherit" component={Link} to="/signin">Sign in</Button>
-        <Button color="inherit" component={Link} to="/register">Register</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/about">About</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/signin">Sign in</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/register">Register</Button>
       </Grid>
     );
 
@@ -61,12 +67,9 @@ class NavBar extends React.Component {
         <AppBar position="static" style={styles.appBar}>
           <Toolbar>
             <Grid justify="space-between" container>
-              {/* <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-                <MenuIcon />
-              </IconButton> */}
               <Grid item>
                 <Button color="inherit" component={Link} to="/">
-                <Typography variant="h5" color="inherit" >
+                <Typography variant="h5" color="inherit" style={styles.brandLogo}>
                   {this.props.title}
                 </Typography>
                 </Button>
