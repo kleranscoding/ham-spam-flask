@@ -21,13 +21,13 @@ def create_new_user():
 
         # check if username/email/password is missing or empty string
         if not data.get('username') or not data.get('email') or not data.get('password'): 
-            return jsonify({'bad request': 'username email password cannot be empty, ', 'success': False}), vf.res_code['BAD_REQ']
+            return jsonify({'message': 'username email password cannot be empty, ', 'success': False}), vf.res_code['BAD_REQ']
         
         # check if email exists
         existing_email = mongo.db.users.find_one({'email': data.get('email')})
         print(existing_email)
         if existing_email: 
-            return jsonify({'bad request': 'email exists', 'success': False}), vf.vf.res_code['BAD_REQ']
+            return jsonify({'message': 'email exists', 'success': False}), vf.vf.res_code['BAD_REQ']
         
         # use bcrypt to hash password and update
         password_hash = bcrypt.generate_password_hash(data.get('password')).decode('utf-8')
@@ -63,7 +63,7 @@ def user_login():
         # check if email password is empty string
         if not data.get('email') or not data.get('password'):
             return jsonify({
-              'bad request': 'email password cannot be empty, ', 'success': False}), vf.res_code['BAD_REQ']
+              'message': 'email password cannot be empty, ', 'success': False}), vf.res_code['BAD_REQ']
 
         # check if user exists
         check_user = mongo.db.users.find_one({'email': data.get('email')})
