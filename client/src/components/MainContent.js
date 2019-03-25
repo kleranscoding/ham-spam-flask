@@ -35,40 +35,58 @@ class MainContent extends React.Component {
       user_text_input: "",
       result: "",
       img_type: "",
-      resultModal: false,
+      didModify: false,
+      save_message: "",
       errors: {}
     }
   }
 
   handleTextChange = (e) => {
     this.setState({ 
-      user_text_input: e.target.value, 
+      user_text_input: e.target.value,
+      didModify: true,
       errors: {} 
     });
   }
 
-  handleModal = (openModal) => {
-    this.setState({ resultModal: openModal });
-  }
-
   saveText = () => {
+    const body = {
+      text: this.state.user_text_input,
+      label: this.state.result,
+    };
+    const config = {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("token",""),
+        "Content-Type": "application/json",
+      }
+    };
 
+    axios.post(backURL+'/api/text/new', body, config)
+    .then(res => {
+      console.log(res.data)
+      this.setState({
+        didModify: true,
+        save_message: res.data.message,
+      });
+    })
+    .catch(err => {
+      console.log(err.response)
+    });
   }
 
   submitText = () => {
-    console.log(this.state.user_text_input)
+    
     this.setState({
-      result: "", img_type: "",
+      result: "", img_type: "", didModify: false, save_message: "",
     });
+
     if (!this.state.user_text_input) {
       this.setState({errors: {"message": "text is empty"}});
       return;
     }
-    this.setState({ 
-      errors: {} 
-    });
-    axios.post(backURL+'/api/classify', 
-    {text: this.state.user_text_input})
+    this.setState({ errors: {} });
+
+    axios.post(backURL+'/api/classify', {text: this.state.user_text_input})
     .then(res => {
       let label = res.data.data.label;
       let img_src = 'http://localhost:3000/static';
@@ -78,15 +96,14 @@ class MainContent extends React.Component {
         img_src += '/assets/ham.png';
       }
       this.setState({
-        result: label,
-        img_type: img_src,
-        resultModal: true, 
+        result: label, img_type: img_src, 
       })
     })
     .catch(err => {
       console.log(err.response)
     });
   }
+
 
   render() {
 
@@ -123,8 +140,7 @@ class MainContent extends React.Component {
           </CardActions>
         </Card>
         { this.state.img_type && this.state.result &&
-        <Modal open={this.state.resultModal} onClose={()=>this.handleModal(false)}>
-        <Card>
+        <Card style={{marginTop: 25}}>
           <img className={classes.media}
               style={{
                 width: 100, height: 100, 
@@ -144,7 +160,7 @@ class MainContent extends React.Component {
                 !
               </Typography>
               {isAuth ? 
-                <Button onClick={this.saveText} 
+                <Button onClick={this.saveText} disabled={this.state.didModify}
                   style={{
                     backgroundColor: '#dee9f9', marginBottom: 10,
                 }}>
@@ -154,8 +170,12 @@ class MainContent extends React.Component {
                   Sign in to save result!
                 </Button>
               }
-        </Card>
-        </Modal>}
+              { this.state.save_message && 
+                <Typography component="h4" variant="h6">
+                  { this.state.save_message }
+                </Typography>
+              }
+        </Card>}
       </div>
     );
   }
