@@ -15,12 +15,12 @@ res_code = {
 ### ===== FUNCTIONS ===== ###
 
 ## get timestamp
-def __get_timestamp():
+def get_timestamp():
     return datetime.datetime.now().timestamp()
 
 
 ## convert epoch to datetime string
-def __convert_datetime(time_str,time_required=True):
+def convert_datetime(time_str,time_required=True):
     if time_required:
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(float(time_str)))
     return time.strftime('%Y-%m-%d', time.localtime(float(time_str)))

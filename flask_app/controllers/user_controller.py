@@ -32,7 +32,7 @@ def create_new_user():
         # use bcrypt to hash password and update
         password_hash = bcrypt.generate_password_hash(data.get('password')).decode('utf-8')
         
-        timestamp = str()
+        timestamp = str(vf.get_timestamp())
         new_data = {
             'username': data.get('username'),
             'email': data.get('email'),
@@ -78,7 +78,7 @@ def user_login():
         _id = check_user['_id']
 
         # save last login detail
-        timestamp = str(vf.__get_timestamp())
+        timestamp = str(vf.get_timestamp())
         mongo.db.users.update_one(
             {'_id': check_user['_id']},
             {'$set': {'last_login': timestamp}}
@@ -111,14 +111,14 @@ def get_profile():
             '_id': str(saved.get('_id')),
             'text': saved.get('text'),
             'label': saved.get('label',''),
-            'date_modified': vf.__convert_datetime(saved.get('date_modified'))
+            'date_modified': vf.convert_datetime(saved.get('date_modified'))
         })
     # put in object
     user_obj = {
         'username': user.get('username'),
         'email': user.get('email'),
-        'date_join': vf.__convert_datetime(user.get('date_join'), time_required=False),
-        'last_login': vf.__convert_datetime(user.get('last_login')),
+        'date_join': vf.convert_datetime(user.get('date_join'), time_required=False),
+        'last_login': vf.convert_datetime(user.get('last_login')),
         'saved_texts': saved_texts
     }
     print(user_obj)

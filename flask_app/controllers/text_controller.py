@@ -21,7 +21,7 @@ def save_text():
 
     _id = get_jwt_identity()
     
-    timestamp = str(vf.__get_timestamp())
+    timestamp = str(vf.get_timestamp())
     new_text = {
         'text': request.json.get('text'),
         'label': request.json.get('label',''),
@@ -40,7 +40,7 @@ def save_text():
             '_id': str(_text_id),
             'text': new_text['text'],
             'label': new_text['label'],
-            'date_modified': vf.__convert_datetime(timestamp)
+            'date_modified': vf.convert_datetime(timestamp)
         },
         'success': True
     }), vf.res_code['SUCCESS']
