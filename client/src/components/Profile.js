@@ -97,6 +97,8 @@ class Profile extends React.Component {
     
     const { classes } = this.props;
 
+    //this.state.saved_texts.sort(descCompare);
+
     let saved_texts_list = this.state.saved_texts.map((text,index) => {
         return (
         <div key={index}>
