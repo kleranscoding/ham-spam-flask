@@ -25,7 +25,7 @@ def create_new_user():
         
         # check if email exists
         existing_email = mongo.db.users.find_one({'email': data.get('email')})
-        print(existing_email)
+        
         if existing_email: 
             return jsonify({'message': 'email exists', 'success': False}), vf.vf.res_code['BAD_REQ']
         
@@ -46,7 +46,6 @@ def create_new_user():
         _id = new_user.inserted_id
         
         token = create_access_token(identity=str(_id))
-        print(token)
         
         resp = make_response(jsonify({'message': 'user registered successfully', 'success': True, 'x-token': token}), vf.res_code['SUCCESS'])
         resp.headers['x-token'] = token
@@ -83,14 +82,12 @@ def user_login():
             {'_id': check_user['_id']},
             {'$set': {'last_login': timestamp}}
         )
-        print(_id, check_user['username'], check_user['email'])
-
+        
         token = create_access_token(identity=str(_id))
-        print(token)
-
+        
         resp = make_response(jsonify({'message': 'user login', 'success': True, 'x-token': token}), vf.res_code['SUCCESS'])
         resp.headers['x-token'] = token
-        print(resp)
+        
         return resp 
     else:
         return jsonify({'message': 'bad request', 'success': False}), vf.res_code['BAD_REQ']
@@ -121,7 +118,7 @@ def get_profile():
         'last_login': vf.convert_datetime(user.get('last_login')),
         'saved_texts': saved_texts
     }
-    print(user_obj)
+    
     return jsonify({
         'message': 'got profile', 
         'data': user_obj,

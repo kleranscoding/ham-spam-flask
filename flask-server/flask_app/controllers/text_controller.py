@@ -82,7 +82,7 @@ def process_text(text_id):
     if request.method == 'DELETE':
 
         removed_obj = mongo.db.texts.delete_one({'_id': obj.get('_id'), 'author': obj.get('author')})
-        print(removed_obj.deleted_count)
+        
         return jsonify({
             'message': 'text deleted',
             'data': {
