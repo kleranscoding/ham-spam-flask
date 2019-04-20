@@ -14,6 +14,14 @@ res_code = {
 
 ### ===== FUNCTIONS ===== ###
 
+
+## clean the text
+def __cleanse_instance(s):
+    punctuation_list = [ "?", ".", ",", "/", "!" ]
+    for punc in punctuation_list: s = s.replace(punc,"")
+    return s.lower()
+
+
 ## get timestamp
 def get_timestamp():
     return datetime.datetime.now().timestamp()
