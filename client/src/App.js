@@ -17,7 +17,7 @@ import MainContent from './components/MainContent';
 
 const styles = {
   'app-main': {
-    background: '#4b94c1',
+    background: 'white',
     //height: '100vh',
     paddingBottom: 40,
     paddingTop: 40,
@@ -31,17 +31,13 @@ class About extends Component {
         <CardContent>
           <Typography component="h3" variant="h5"> ABOUT </Typography>
           <p>
-            One of the famous applications of Naive Bayes classiers is in spam filtering for e-mail.
-          </p>
-          <p>  
-            Ham-Spam-Flask is a mini project that combines web development and machine learning model, specifically Naive Bayes Classifier.
-            For this machine learning model, we assume each text occurrence is independent of each other. 
-            Based on that we calculate the joint probability for each label SPAM and HAM.
+            Spam messages are annoying and filtering them is even more annoying.
           </p>
           <p>
+            Ham-Spam-Flask is a light-weighted demo application that combines web development and Naive Bayes Classifier to classify SMS text as "HAM" or "SPAM".
             Using the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank" rel="noopener noreferrer">
               SMS Spam Collection dataset</a> from <a href="https://archive.ics.uci.edu/ml/index.php" target="_blank" rel="noopener noreferrer">UCI Machine Learning Repository</a>, 
-            we create a simple Naive Bayes Classifier as a Python object running on the Flask server.
+            a simple Naive Bayes Classifier is created as a Python object running on the Flask server.
           </p>
           <p>
             For more details, visit <a href="https://github.com/kleranscoding/ham-spam-flask" target="_blank" rel="noopener noreferrer"> here </a>
@@ -56,6 +52,16 @@ class Home extends Component {
   render() {
     return (
       <React.Fragment>
+        <About />
+      </React.Fragment>
+    );
+  }
+}
+
+class ClassifyContainer extends Component {
+  render() {
+    return (
+      <React.Fragment>
         <MainContent />
       </React.Fragment>
     );
@@ -65,7 +71,7 @@ class Home extends Component {
 const Footer = () => {
   return (
     <div>
-      2019 Ham-Spam-Flask
+      Powered by React
     </div>
   );
 }
@@ -81,10 +87,6 @@ class App extends Component {
     modalRegister: false,
   }
 
-  toggle = (modalName) => {
-
-   }
-
   render() {
 
     return (
@@ -98,6 +100,7 @@ class App extends Component {
             <Route path="/profile" component={ Profile } />
             <Route path="/about" component={ About } />
             <Route exact path="/" component={ Home } />
+            <Route exact path="/classify" component={ ClassifyContainer } />
             <Route exact path="/register" component={ SignUp } />
             <Route exact path="/signin" component={ SignIn } />
           </Switch>

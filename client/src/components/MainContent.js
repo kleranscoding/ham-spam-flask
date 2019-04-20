@@ -22,7 +22,8 @@ const resultLabelFont = 'Luckiest Guy, cursive';
 const styles = theme => ({
   card: {
     maxWidth: 750,
-    minHeight: 200,
+    minHeight: '50vh',
+    margin: '20px 10px',
   },
   media: {
     objectFit: 'cover',

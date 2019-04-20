@@ -49,6 +49,7 @@ class NavBar extends React.Component {
       <Grid item>
         <Button style={styles.navBarButton} color="inherit" component={Link} to="/profile">Profile</Button>
         <Button style={styles.navBarButton} color="inherit" component={Link} to="/about">About</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/classify">Classify</Button>
         <Button style={styles.navBarButton} color="inherit" onClick={this.onLogout} >Logout</Button>
       </Grid>
     );
@@ -56,6 +57,7 @@ class NavBar extends React.Component {
     const logoutLinks = (
       <Grid item>
         <Button style={styles.navBarButton} color="inherit" component={Link} to="/about">About</Button>
+        <Button style={styles.navBarButton} color="inherit" component={Link} to="/classify">Classify</Button>
         <Button style={styles.navBarButton} color="inherit" component={Link} to="/signin">Sign in</Button>
         <Button style={styles.navBarButton} color="inherit" component={Link} to="/register">Register</Button>
       </Grid>
