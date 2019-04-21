@@ -8,8 +8,7 @@ import Typography from '@material-ui/core/Typography';
 
 import spam from '../assets/spam.png';
 import ham from '../assets/ham.png';
-
-const backURL = "https://ham-spam-flask-server.herokuapp.com";
+import { backURL } from '../validation/constants';
 
 const resultLabelFont = 'Luckiest Guy, cursive';
 
@@ -146,7 +145,6 @@ class ClassifyContainer extends React.Component {
               </span>
             </Typography>
 
-          
           
           {errors.message && 
             <Typography component="h6" variant="h6">

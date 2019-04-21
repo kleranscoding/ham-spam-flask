@@ -13,8 +13,7 @@ import { withStyles } from '@material-ui/core';
 
 import store from '../store';
 import { setCurrentUser } from  '../actions/auth';
-
-const backURL = 'https://ham-spam-flask-server.herokuapp.com';
+import { backURL } from '../validation/constants';
 
 const resultLabelFont = 'Luckiest Guy, cursive';
 
@@ -54,6 +53,16 @@ function descCompare(a,b) {
   return comparison;
 }
 
+function setHeader() {
+  const config = {
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("token",""),
+      "Content-Type": "application/json",
+    }
+  };
+  return config;
+}
+
 class Profile extends React.Component {
 
   state = {
@@ -64,6 +73,24 @@ class Profile extends React.Component {
 
   onDeleteText = (textId) => {
     console.log(textId)
+
+    const config = setHeader();
+
+    axios.delete(backURL+'/api/text/'+textId,config)
+    .then(res => {
+      console.log(res.data)
+      const deleteId = res.data.data._id, deleteText = res.data.data.text;
+      let updatedTexts = this.state.saved_texts.filter(text=>{
+        return text._id !== deleteId
+      });
+      this.setState({
+        saved_texts: updatedTexts,
+      });
+    })
+    .catch(err => {
+      console.log(err.response);
+    });
+
   }
 
   componentWillMount () {
@@ -73,12 +100,7 @@ class Profile extends React.Component {
       return;
     } 
 
-    const config = {
-      headers: {
-        "Authorization": "Bearer " + localStorage.getItem("token",""),
-        "Content-Type": "application/json",
-      }
-    };
+    const config = setHeader();
 
     axios.get(backURL+'/api/users/profile',config)
     .then(res => {

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { GET_ERRORS, SET_CURRENT_USER } from './types';
-
-const backURL = "https://ham-spam-flask-server.herokuapp.com";
+import { backURL } from '../validation/constants';
 
 export const registerNewUser = (user, history) => dispatch => {
   axios.post(backURL+'/api/users/register', user)
