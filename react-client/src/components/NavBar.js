@@ -28,6 +28,9 @@ const styles = {
   appBar: {
     // background: '#1566ed',
     background: '#191946',
+    position: 'fixed',
+    top: 0,
+    width: '100%', 
   },
   navBarButton: {
     fontFamily: 'Alegreya Sans, sans-serif'

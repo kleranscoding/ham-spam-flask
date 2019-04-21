@@ -17,7 +17,7 @@ const styles = {
     // minHeight: '75vh',
     // paddingBottom: 40,
     // paddingTop: 40,
-    margin: '50px 10px',
+    margin: '100px 10px',
   },
   footer: {
     position: 'fixed',
