@@ -20,7 +20,7 @@ export default class About extends Component {
             Ham-Spam-Flask is a light-weighted demo application that combines web development and Naive Bayes Classifier to classify SMS text as "HAM" or "SPAM".
             Trained with the <a href="https://archive.ics.uci.edu/ml/datasets/sms+spam+collection" target="_blank" rel="noopener noreferrer">
               SMS Spam Collection dataset</a>, 
-            the machine learning model is created as a Python object runs on the Flask server.
+            the machine learning model is created as a Python object and runs on the Flask server.
           </p>
 
           <Button style={{backgroundColor: 'rgb(21, 102, 237)'}}
