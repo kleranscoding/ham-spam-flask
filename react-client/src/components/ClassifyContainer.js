@@ -197,11 +197,6 @@ class ClassifyContainer extends React.Component {
                   Sign in to save result!
                 </Button>
               }
-              {/* { this.state.save_message && 
-                <Typography component="h4" variant="h6">
-                  
-                </Typography>
-              } */}
         </div>}
       </div>
 
