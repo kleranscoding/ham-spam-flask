@@ -191,17 +191,17 @@ class ClassifyContainer extends React.Component {
                   style={{
                     backgroundColor: '#dee9f9', marginBottom: 10,
                 }}>
-                  Save Result
+                  {this.state.save_message ? this.state.save_message : "Save Result" } 
                 </Button> : 
                 <Button disabled={true}>
                   Sign in to save result!
                 </Button>
               }
-              { this.state.save_message && 
+              {/* { this.state.save_message && 
                 <Typography component="h4" variant="h6">
-                  { this.state.save_message }
+                  
                 </Typography>
-              }
+              } */}
         </div>}
       </div>
 
