@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Modal from '@material-ui/core/Modal';
 
-
 import './styles/App.css';
 import NavBar from './components/NavBar';
 import About from './components/About';
@@ -12,8 +11,6 @@ import SignIn from './components/auth/SignIn';
 import store from './store';
 import { setCurrentUser } from './actions/auth';
 import ClassifyContainer from './components/ClassifyContainer';
-
-
 
 const styles = {
   'app-main': {
@@ -37,6 +34,7 @@ const styles = {
   },
 };
 
+const brandTitle = <><span style={styles.brandLogo}>HAM-SPAM</span>-<span>FLASK</span></>
 
 class Home extends Component {
   render() {
@@ -51,7 +49,7 @@ class Home extends Component {
 const Footer = () => {
   return (
     <div style={styles.footer}>
-      Ham-Spam-Flask
+      {brandTitle}
     </div>
   );
 }
@@ -69,12 +67,10 @@ class App extends Component {
 
   render() {
 
-    const title = <><span style={styles.brandLogo}>Ham-Spam</span>-<span>Flask</span></>
-
     return (
       <div className="App">
         <header>
-          <NavBar title={title}/>
+          <NavBar title={brandTitle}/>
         </header>
         
         <div className="main" style={styles['app-main']}>
@@ -91,6 +87,7 @@ class App extends Component {
         <Modal open={this.state.modalSignin} >
 
         </Modal>
+
         <Footer />
       </div>
       

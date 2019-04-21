@@ -66,14 +66,13 @@ class ClassifyContainer extends React.Component {
 
     axios.post(backURL+'/api/text/new', body, config)
     .then(res => {
-      console.log(res.data)
       this.setState({
         didModify: true,
         save_message: res.data.message,
       });
     })
     .catch(err => {
-      console.log(err.response)
+      return console.log(err.response);
     });
   }
 
@@ -103,7 +102,7 @@ class ClassifyContainer extends React.Component {
       })
     })
     .catch(err => {
-      console.log(err.response)
+      return console.log(err.response);
     });
   }
 
