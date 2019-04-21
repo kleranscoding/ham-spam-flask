@@ -1,0 +1,21 @@
+.App {
+  text-align: center;
+}
+
+a {
+  color: rgb(21, 102, 237);
+  text-decoration: none;
+}
+a:hover {
+  cursor: pointer;
+}
+
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
