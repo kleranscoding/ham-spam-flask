@@ -1,19 +1,22 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { withStyles } from '@material-ui/core';
 
-import store from '../store';
-import { setCurrentUser } from  '../actions/auth';
+//import store from '../store';
 import { backURL } from '../validation/constants';
+import { fetchTexts, deleteText } from '../actions/texts';
 
 const resultLabelFont = 'Luckiest Guy, cursive';
 
@@ -31,7 +34,7 @@ const styles = theme => ({
   },
 });
 
-function ascCompare(a,b) {
+function ascTimeComparator(a,b) {
   const timeA = a.date_modified, timeB = b.date_modified;
   let comparison = 0;
   if (timeA > timeB) {
@@ -42,7 +45,7 @@ function ascCompare(a,b) {
   return comparison;
 }
 
-function descCompare(a,b) {
+function descTimeComparator(a,b) {
   const timeA = a.date_modified, timeB = b.date_modified;
   let comparison = 0;
   if (timeA > timeB) {
@@ -66,62 +69,88 @@ function setHeader() {
 class Profile extends React.Component {
 
   state = {
-    username: "",
-    saved_texts: [],
-    sortAsc: false,
+    //username: "",
+    //saved_texts: [],
+    sortAsc: true,
+    anchorEl: null,
   };
 
   onDeleteText = (textId) => {
-    console.log(textId)
 
     const config = setHeader();
 
-    axios.delete(backURL+'/api/text/'+textId,config)
-    .then(res => {
-      console.log(res.data)
-      const deleteId = res.data.data._id, deleteText = res.data.data.text;
-      let updatedTexts = this.state.saved_texts.filter(text=>{
-        return text._id !== deleteId
-      });
-      this.setState({
-        saved_texts: updatedTexts,
-      });
-    })
-    .catch(err => {
-      console.log(err.response);
-    });
+    this.props.deleteText(textId, config);
+    // axios.delete(backURL+'/api/text/'+textId,config)
+    // .then(res => {
+    //   const deleteId = res.data.data._id;
+    //   let updatedTexts = this.state.saved_texts.filter(text=>{
+    //     return text._id !== deleteId
+    //   });
+    //   this.setState({
+    //     saved_texts: updatedTexts,
+    //   });
+    // })
+    // .catch(err => {
+    //   return console.log(err.response);
+    // });
 
+  }
+
+  sortTextByTime = (isAsc, saved_texts) => {
+    if (isAsc) {
+      if (!this.state.sortAsc) {
+        saved_texts.sort(ascTimeComparator);
+        this.setState({ 
+          //saved_texts, 
+          sortAsc: true });
+      }
+    } else {
+      if (this.state.sortAsc) {
+        const saved_texts = this.props.profile.saved_texts.sort(descTimeComparator);
+        this.setState({ 
+          //saved_texts, 
+          sortAsc: false });
+      }
+      
+    }
+    this.handleClose();
+  } 
+
+
+  handleClick = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  }
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
   }
 
   componentWillMount () {
     if (!localStorage.token) {
-      console.log("no token! redirecting...")
       this.props.history.push("/");
       return;
     } 
 
     const config = setHeader();
 
-    axios.get(backURL+'/api/users/profile',config)
-    .then(res => {
-      console.log(res.data)
+    this.props.fetchTexts(config);
+    
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
       this.setState({
-        username: res.data.data.username,
-        saved_texts: res.data.data.saved_texts,
+        errors: nextProps.errors
       });
-    })
-    .catch(err => {
-      console.log(err.response);
-    });
+    }
   }
   
   render() {
     
     const { classes } = this.props;
-
-    //this.state.saved_texts.sort(descCompare);
-
-    let saved_texts_list = this.state.saved_texts.map((text,index) => {
+    const { saved_texts, username } = this.props.profile;
+    
+    let saved_texts_list = saved_texts.map((text,index) => {
         return (
         <div key={index}>
           <Divider />
@@ -156,9 +185,44 @@ class Profile extends React.Component {
       <List className={classes.root} style={{margin: '0 auto'}}>
           <Typography component="h1" variant="h3"
             style={{height: 50, backgroundColor: '#ffffff'}}>
-            Hi, {this.state.username}!
+            Hi, {username}!
           </Typography>
-          <p> your saved texts : {this.state.saved_texts.length } </p>
+          <p> your saved texts : {saved_texts.length } </p>
+          
+          <div className="profile menu">
+            <Button component={Link} to="/classify"
+              style={{backgroundColor: 'rgb(21, 102, 237)', color: 'white', margin: '10px'}}
+            >
+              Classify Text
+            </Button>
+
+            <Button onClick={this.handleClick}
+              style={{backgroundColor: 'rgb(21, 102, 237)', color: 'white', margin: '10px'}}
+              aria-owns={this.state.anchorEl ? 'sort-menu' : undefined}
+              aria-haspopup="true" 
+            >
+              Sort Results by
+            </Button>
+
+            <Menu open={Boolean(this.state.anchorEl)} onClose={this.handleClose}
+              id="sort-menu" anchorEl={this.state.anchorEl}
+            >
+              <MenuItem disabled style={{backgroundColor: 'white', color: 'rgb(21, 102, 237)'}}>
+                Sort Results by 
+              </MenuItem>
+              <MenuItem 
+                onClick={()=>this.sortTextByTime(true, saved_texts)}
+              >
+                Time (Ascending)
+              </MenuItem>
+              <MenuItem 
+                onClick={()=>this.sortTextByTime(false, saved_texts)}
+              >
+                Time (Descending)
+              </MenuItem>
+            </Menu>
+          </div>
+
           {saved_texts_list }
         </List>
     );
@@ -167,6 +231,14 @@ class Profile extends React.Component {
 
 Profile.propTypes = {
   classes: PropTypes.object.isRequired,
+  fetchTexts: PropTypes.func.isRequired,
+  deleteText: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles)(Profile));
+const mapStateToProps = state => ({
+  errors: state.errors,
+  profile: state.profile,
+});
+
+export default withRouter(connect(mapStateToProps, { fetchTexts, deleteText })(withStyles(styles)(Profile)));

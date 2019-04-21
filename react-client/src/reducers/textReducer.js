@@ -13,6 +13,14 @@ export default function(state = initialState, action ) {
         username: action.payload.username,
         saved_texts: action.payload.saved_texts,
       };
+    case DELETE_TEXT:
+      const updatedTextList = state.saved_texts.filter(text=>{
+        return text._id !== action._id;
+      })
+      return {
+        ...state,
+        saved_texts: updatedTextList,
+      };
     default: 
       return state;
   }
